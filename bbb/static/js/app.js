@@ -25,11 +25,46 @@ function buildMetadata(sample) {
 
 function buildCharts(sample) {
   // @TODO: Use `d3.json` to fetch the sample data for the plots
-  d3.json(`samples/${sample}`).then((sample_data) => {_data = sample_data});
-  console.log(_data);
+  d3.json(`samples/${sample}`).then(function(data) {
+    console.log(data)
     // @TODO: Build a Bubble Chart using the sample data
-  
-    // @TODO: Build a Pie Chart
+  var trace1 = {
+    x: data.otu_ids,
+    y: data.sample_values,
+    text: data.otu_labels,
+    mode: 'markers',
+    marker: {
+      size: data.sample_values,
+      sizeref: 0.2,
+      sizemode: 'area'
+    }
+  };
+  var bubble_data = [trace1]
+  var layout = {
+    title: 'OTU Counts per Sample',
+    showlegend: false,
+    height: 600,
+    width: 1000,
+  }
+ 
+  Plotly.newPlot('bubble',bubble_data,layout);
+   // @TODO: Build a Pie Chart
+  var first_ten_otu_ids = data.otu_ids.slice(0,10)
+  var first_ten_otu_labels = data.otu_labels.slice(0,10)
+  var first_ten_sample_values = data.sample_values.slice(0,10)
+
+  var data = [{
+    values: first_ten_sample_values,
+    labels: first_ten_otu_ids,
+    type: 'pie'
+  }];
+  var layout = {
+    height: 400,
+    width: 400,
+    title: `Breakdown of OTU's for Sample ${sample}`
+  };
+  Plotly.newPlot('pie', data, layout);
+});
     // HINT: You will need to use slice() to grab the top 10 sample_values,
     // otu_ids, and labels (10 each).
 }
